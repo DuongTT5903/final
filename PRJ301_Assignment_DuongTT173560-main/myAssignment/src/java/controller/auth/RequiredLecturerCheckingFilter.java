@@ -61,11 +61,11 @@ public class RequiredLecturerCheckingFilter implements Filter {
         User user = (User) request.getSession().getAttribute("user");
         Integer roleid = (Integer) request.getSession().getAttribute("roleid");
         
-        if (user == null || roleid == null) {
+        if (user == null || roleid !=2) {
             return false;
         } else {
             Lecturer lecturer = user.getLecturer();
-            return lecturer != null && roleid == 2;
+            return lecturer != null ;
         }
     }
 
