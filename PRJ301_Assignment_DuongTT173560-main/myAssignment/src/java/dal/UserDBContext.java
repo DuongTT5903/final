@@ -12,6 +12,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Lecturer;
 import model.Role;
+import model.Student;
 
 /**
  *
@@ -25,13 +26,33 @@ public class UserDBContext extends DBContext<User> {
     PreparedStatement stm = null;
     User user = null;
     try {
-        String sql = "SELECT u.username, u.displayname, l.lid, l.lname, r.roleid, r.rolename " +
-                     "FROM users u " +
-                     "LEFT JOIN users_lecturers ul ON ul.username = u.username AND ul.active = 1 " +
-                     "LEFT JOIN lecturers l ON ul.lid = l.lid " +
-                     "LEFT JOIN roles ur ON ur.roleid = u.roleid " +
-                     "JOIN roles r ON ur.roleid = r.roleid " +
-                     "WHERE u.username = ? AND u.[password] = ? AND r.roleid = ?";
+        String sql = "SELECT " +
+                     "    u.username, " +
+                     "    u.displayname, " +
+                     "    l.lid, " +
+                     "    l.lname, " +
+                     "    r.roleid, " +
+                     "    r.rolename, " +
+                     "    s.sid, " +
+                     "    s.sname " +
+                     "FROM " +
+                     "    users u " +
+                     "LEFT JOIN " +
+                     "    users_lecturers ul ON ul.username = u.username AND ul.active = 1 " +
+                     "LEFT JOIN " +
+                     "    lecturers l ON ul.lid = l.lid " +
+                     "LEFT JOIN " +
+                     "    roles ur ON ur.roleid = u.roleid " +
+                     "JOIN " +
+                     "    roles r ON ur.roleid = r.roleid " +
+                     "LEFT JOIN " +
+                     "    users_students us ON us.username = u.username " +
+                     "LEFT JOIN " +
+                     "    students s ON us.sid = s.sid " +
+                     "WHERE " +
+                     "    u.username = ? " +
+                     "    AND u.password = ? " +
+                     "    AND r.roleid = ?";
 
         stm = connection.prepareStatement(sql);
         stm.setString(1, username);
@@ -48,6 +69,13 @@ public class UserDBContext extends DBContext<User> {
                 lecturer.setId(lid);
                 lecturer.setName(rs.getString("lname"));
                 user.setLecturer(lecturer);
+            }
+            int sid = rs.getInt("sid");
+               if (sid != 0) {
+                Student student = new Student();
+                student.setId(sid);
+                student.setName(rs.getString("sname"));
+                user.setStudent(student);
             }
         }
     } catch (SQLException ex) {
