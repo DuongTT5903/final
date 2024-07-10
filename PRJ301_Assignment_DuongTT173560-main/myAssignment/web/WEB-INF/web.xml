@@ -24,6 +24,14 @@
         <servlet-name>ViewProfile</servlet-name>
         <servlet-class>controller.student.ViewProfile</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>HomeController</servlet-name>
+        <servlet-class>controller.student.HomeController</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HomeLecturerController</servlet-name>
+        <servlet-class>controller.exam.HomeLecturerController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ViewCourseByLecturerController</servlet-name>
         <url-pattern>/exam/lecturer</url-pattern>
@@ -43,5 +51,13 @@
     <servlet-mapping>
         <servlet-name>ViewProfile</servlet-name>
         <url-pattern>/student/profile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HomeController</servlet-name>
+        <url-pattern>/student/home</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HomeLecturerController</servlet-name>
+        <url-pattern>/lecturer/home</url-pattern>
     </servlet-mapping>
 </web-app>
