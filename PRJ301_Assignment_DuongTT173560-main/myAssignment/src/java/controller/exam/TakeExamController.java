@@ -24,7 +24,8 @@ import model.Student;
 import model.User;
 
 /**
-
+ *
+ * @author sonnt-local
  */
 public class TakeExamController extends BaseRequiredLecturerAuthenticationController {
    

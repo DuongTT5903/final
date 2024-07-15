@@ -9,6 +9,10 @@ import model.Course;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Assessment;
+import model.Exam;
+import model.Grade;
+import model.Student;
 
 /**
  *
@@ -22,6 +26,7 @@ public class CourseDBContext extends DBContext<Course> {
 //        ArrayList<Course> coursesByLecturer = db.getCoursesByLecturer(1);
 //        System.out.println(coursesByLecturer.size());
 //    }
+
     
     public ArrayList<Course> getCoursesByLecturer(int lid) {
         ArrayList<Course> courses = new ArrayList<>();

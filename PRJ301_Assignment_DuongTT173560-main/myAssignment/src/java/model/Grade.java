@@ -1,17 +1,10 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
-/**
- *
- * @author X1 Nano
- */
 public class Grade {
     private Exam exam;
     private Student student;
     private float score;
+    private Assessment assessment; // Add assessment object to access weight
 
     public Exam getExam() {
         return exam;
@@ -36,5 +29,12 @@ public class Grade {
     public void setScore(float score) {
         this.score = score;
     }
-    
+
+    public Assessment getAssessment() {
+        return assessment;
+    }
+
+    public void setAssessment(Assessment assessment) {
+        this.assessment = assessment;
+    }
 }

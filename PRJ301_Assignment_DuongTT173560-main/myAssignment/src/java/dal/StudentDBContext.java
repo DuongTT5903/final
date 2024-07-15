@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dal;
 
 import java.sql.PreparedStatement;
@@ -12,43 +8,71 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import model.Assessment;
 import model.Exam;
+import model.Grade;
 import model.Student;
 import model.Subject;
 
 /**
- *
- * @author sonnt-local
+ * Data Access Layer for Student-related database operations.
  */
 public class StudentDBContext extends DBContext<Student> {
+    
+    /**
+     * Retrieves a list of grades for a given student ID.
+     * 
+     * @param sid the student ID
+     * @return a list of grades for the student
+     * @throws SQLException if a database access error occurs
+     */
+   
 
+    /**
+     * Retrieves a list of students enrolled in a given course ID.
+     * 
+     * @param cid the course ID
+     * @return a list of students enrolled in the course
+     */
     public ArrayList<Student> getStudentsByCourse(int cid) {
         ArrayList<Student> students = new ArrayList<>();
         PreparedStatement stm = null;
+        ResultSet rs = null;
+
         try {
-            String sql = "SELECT s.sid,s.sname FROM students s INNER JOIN students_courses sc ON s.sid = sc.sid\n"
-                    + "						INNER JOIN courses c ON c.cid = sc.cid\n"
-                    + "						WHERE c.cid = ?";
+            String sql = "SELECT s.sid, s.sname FROM students s "
+                       + "INNER JOIN students_courses sc ON s.sid = sc.sid "
+                       + "INNER JOIN courses c ON c.cid = sc.cid "
+                       + "WHERE c.cid = ?";
 
             stm = connection.prepareStatement(sql);
             stm.setInt(1, cid);
-            ResultSet rs = stm.executeQuery();
+            rs = stm.executeQuery();
+
             while (rs.next()) {
                 Student s = new Student();
                 s.setId(rs.getInt("sid"));
                 s.setName(rs.getString("sname"));
                 students.add(s);
             }
-
         } catch (SQLException ex) {
             Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, null, ex);
         } finally {
-            try {
-                stm.close();
-                connection.close();
-            } catch (SQLException ex) {
-                Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, null, ex);
+            if (rs != null) {
+                try {
+                    rs.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, null, ex);
+                }
             }
+            if (stm != null) {
+                try {
+                    stm.close();
+                } catch (SQLException ex) {
+                    Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            disconnect();
         }
+
         return students;
     }
 
@@ -77,4 +101,13 @@ public class StudentDBContext extends DBContext<Student> {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    public void disconnect() {
+        try {
+            if (connection != null && !connection.isClosed()) {
+                connection.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
 }

@@ -132,9 +132,15 @@
                     </a>
                 </li>
                 <li class="list">
-                    <a href="http://localhost:9999/student/profile">
+                    <a href="http://localhost:8080/student/profile">
                         <span class="icon"><i class="fa-solid fa-calendar"></i></span>
                         <span class="title">View Profile</span>
+                    </a>
+                </li>
+                                <li class="list">
+                    <a href="http://localhost:8080/myAssignment/student/mark">
+                        <span class="icon"><i class="fa-solid fa-calendar"></i></span>
+                        <span class="title">View Mark</span>
                     </a>
                 </li>
                 

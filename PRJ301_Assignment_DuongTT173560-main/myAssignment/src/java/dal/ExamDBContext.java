@@ -22,10 +22,10 @@ public class ExamDBContext extends DBContext<Exam> {
         ArrayList<Exam> exams = new ArrayList<>();
         PreparedStatement stm = null;
         try {
-            String sql = "SELECT e.eid,e.duration,e.[from],a.aid,a.aname,a.weight,sub.subid,sub.subname FROM exams e INNER JOIN assesments a ON a.aid = e.aid\n"
-                    + "			INNER JOIN subjects sub ON sub.subid = a.subid\n"
-                    + "			INNER JOIN courses c ON c.subid = sub.subid\n"
-                    + "			WHERE c.cid = ?";
+            String sql = "String sql = \"SELECT g.eid, g.sid, g.score, a.weight FROM grades g \"\n" +
+"           + \"JOIN exams ex ON g.eid = ex.eid \"\n" +
+"           + \"JOIN assessments a ON ex.aid = a.aid \"\n" +
+"           + \"WHERE g.sid = ?\";";
 
             stm = connection.prepareStatement(sql);
             stm.setInt(1, cid);

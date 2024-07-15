@@ -32,6 +32,10 @@
         <servlet-name>HomeLecturerController</servlet-name>
         <servlet-class>controller.exam.HomeLecturerController</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ViewMarkController</servlet-name>
+        <servlet-class>controller.student.ViewMarkController</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ViewCourseByLecturerController</servlet-name>
         <url-pattern>/exam/lecturer</url-pattern>
@@ -59,5 +63,9 @@
     <servlet-mapping>
         <servlet-name>HomeLecturerController</servlet-name>
         <url-pattern>/lecturer/home</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ViewMarkController</servlet-name>
+        <url-pattern>/student/mark</url-pattern>
     </servlet-mapping>
 </web-app>

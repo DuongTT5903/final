@@ -10,6 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import model.Assessment;
 import model.Exam;
 import model.Grade;
 import model.Student;
@@ -19,6 +20,61 @@ import model.Student;
  * @author sonnt-local
  */
 public class GradeDBContext extends DBContext<Grade> {
+
+    public ArrayList<Grade> listStudentGrades(int sid) throws SQLException {
+        ArrayList<Grade> listStudentGrades = new ArrayList<>();
+        PreparedStatement stm = null;
+        ResultSet rs = null;
+
+        try {
+            String sql = "SELECT g.eid, a.aname, g.sid, g.score, a.weight \n"
+                    + "FROM grades g \n"
+                    + "JOIN exams ex ON g.eid = ex.eid \n"
+                    + "JOIN assesments a ON ex.aid = a.aid \n"
+                    + "WHERE g.sid = ?";
+
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, sid);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                Grade g = new Grade();
+                g.setScore(rs.getFloat("score"));
+
+                Student s = new Student();
+
+                g.setStudent(s);
+
+                Exam e = new Exam();
+                e.setId(rs.getInt("eid"));
+                g.setExam(e);
+                Assessment a = new Assessment();
+                a.setWeight(rs.getFloat("weight"));
+                a.setName(rs.getString("aname"));
+
+                g.setAssessment(a);
+
+                listStudentGrades.add(g);
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, null, ex);
+            throw ex;
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+
+            } catch (SQLException ex) {
+                Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+
+        return listStudentGrades;
+    }
 
     public ArrayList<Grade> getGradesFromExamIds(ArrayList<Integer> eids) {
         ArrayList<Grade> grades = new ArrayList<>();
@@ -74,20 +130,20 @@ public class GradeDBContext extends DBContext<Grade> {
                 + "           (?\n"
                 + "           ,?\n"
                 + "           ,?)";
-        
-        PreparedStatement stm_remove =null;
+
+        PreparedStatement stm_remove = null;
         ArrayList<PreparedStatement> stm_inserts = new ArrayList<>();
-        
+
         try {
             connection.setAutoCommit(false);
             stm_remove = connection.prepareStatement(sql_remove);
             stm_remove.setInt(1, cid);
             stm_remove.executeUpdate();
-            
+
             for (Grade grade : grades) {
                 PreparedStatement stm_insert = connection.prepareStatement(sql_insert);
                 stm_insert.setInt(1, grade.getExam().getId());
-                stm_insert.setInt(2,grade.getStudent().getId());
+                stm_insert.setInt(2, grade.getStudent().getId());
                 stm_insert.setFloat(3, grade.getScore());
                 stm_insert.executeUpdate();
                 stm_inserts.add(stm_insert);
@@ -100,9 +156,7 @@ public class GradeDBContext extends DBContext<Grade> {
             } catch (SQLException ex1) {
                 Logger.getLogger(GradeDBContext.class.getName()).log(Level.SEVERE, null, ex1);
             }
-        }
-        finally
-        {
+        } finally {
             try {
                 connection.setAutoCommit(true);
                 stm_remove.close();
@@ -114,7 +168,7 @@ public class GradeDBContext extends DBContext<Grade> {
                 Logger.getLogger(GradeDBContext.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        
+
     }
 
     @Override
