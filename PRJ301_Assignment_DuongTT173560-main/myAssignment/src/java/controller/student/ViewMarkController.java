@@ -49,25 +49,24 @@ protected void doPost(HttpServletRequest request, HttpServletResponse response, 
             if (grade.getAssessment() != null) {
                 totalScore += grade.getScore() * grade.getAssessment().getWeight();
                 totalWeight += grade.getAssessment().getWeight();
-                checkWeight += grade.getAssessment().getWeight() * 100; // Multiply weight by 100
+                checkWeight += grade.getAssessment().getWeight() * 100;
             }
         }
 
         double averageGrade = 0.0;
 
-        // Check if checkWeight equals 100 before calculating averageGrade
+        
         if (checkWeight == 100.0) { // Adjusted for multiplication by 100
             averageGrade = (totalWeight > 0) ? totalScore / totalWeight : 0.0;
         } else {
-            // Handle the case where checkWeight is not 10000 (equivalent to 100 after multiplication by 100)
-            // You might want to set averageGrade to some default value or handle it differently
-            averageGrade = 0.0; // Set to 0 or handle as needed
-            // You can also set an error message or log that weights do not sum up to 100%
-            // request.setAttribute("error", "Assessment weights do not sum up to 100%");
+         
+            averageGrade = 0.0; 
+            
         }
-
+      String formattedAverageGrade = String.format("%.2f", averageGrade);
         request.setAttribute("grades", grades);
-        request.setAttribute("averageGrade", averageGrade);
+        request.setAttribute("formattedAverageGrade", formattedAverageGrade);
+            request.setAttribute("averageGrade", averageGrade);
         request.getRequestDispatcher("/view/student/mark.jsp").forward(request, response);
     } catch (Exception e) {
         throw new ServletException("Error fetching grades", e);

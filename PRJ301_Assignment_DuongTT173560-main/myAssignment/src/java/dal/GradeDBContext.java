@@ -22,69 +22,68 @@ import model.Subject;
  */
 public class GradeDBContext extends DBContext<Grade> {
 
-public ArrayList<Grade> listStudentGrades(int sid, int cid) throws SQLException {
-    ArrayList<Grade> listStudentGrades = new ArrayList<>();
-    PreparedStatement stm = null;
-    ResultSet rs = null;
+    public ArrayList<Grade> listStudentGrades(int sid, int cid) throws SQLException {
+        ArrayList<Grade> listStudentGrades = new ArrayList<>();
+        PreparedStatement stm = null;
+        ResultSet rs = null;
 
-    try {
-        String sql = "SELECT g.sid, s.sname, sub.subname, a.aname, a.weight, g.score " +
-                     "FROM grades g " +
-                     "JOIN students s ON g.sid = s.sid " +
-                     "JOIN exams e ON g.eid = e.eid " +
-                     "JOIN assesments a ON e.aid = a.aid " +
-                     "JOIN subjects sub ON a.subid = sub.subid " +
-                     "JOIN courses c ON sub.subid = c.subid " +
-                     "JOIN students_courses sc ON c.cid = sc.cid AND s.sid = sc.sid " +
-                     "WHERE g.sid = ? AND c.cid = ?";
-
-        stm = connection.prepareStatement(sql);
-        stm.setInt(1, sid);
-        stm.setInt(2, cid);
-        rs = stm.executeQuery();
-
-        while (rs.next()) {
-            Student student = new Student();
-            student.setId(rs.getInt("sid"));
-            student.setName(rs.getString("sname"));
-
-            Subject subject = new Subject();
-            subject.setName(rs.getString("subname"));
-
-            Assessment assessment = new Assessment();
-            assessment.setName(rs.getString("aname"));
-            assessment.setWeight(rs.getFloat("weight"));
-
-            Exam exam = new Exam();
-            exam.setSubject(subject);
-            exam.setAssessment(assessment);
-
-            Grade grade = new Grade();
-            grade.setStudent(student);
-            grade.setExam(exam);
-            grade.setScore(rs.getFloat("score"));
-              grade.setAssessment(assessment);
-            listStudentGrades.add(grade);
-        }
-    } catch (SQLException ex) {
-        Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, "Error fetching student grades", ex);
-        throw ex; // Rethrow the exception to handle it at a higher level if necessary
-    } finally {
         try {
-            if (rs != null) {
-                rs.close();
-            }
-            if (stm != null) {
-                stm.close();
+            String sql = "SELECT g.sid, s.sname, sub.subname, a.aname, a.weight, g.score "
+                    + "FROM grades g "
+                    + "JOIN students s ON g.sid = s.sid "
+                    + "JOIN exams e ON g.eid = e.eid "
+                    + "JOIN assesments a ON e.aid = a.aid "
+                    + "JOIN subjects sub ON a.subid = sub.subid "
+                    + "JOIN courses c ON sub.subid = c.subid "
+                    + "JOIN students_courses sc ON c.cid = sc.cid AND s.sid = sc.sid "
+                    + "WHERE g.sid = ? AND c.cid = ?";
+
+            stm = connection.prepareStatement(sql);
+            stm.setInt(1, sid);
+            stm.setInt(2, cid);
+            rs = stm.executeQuery();
+
+            while (rs.next()) {
+                Student student = new Student();
+                student.setId(rs.getInt("sid"));
+                student.setName(rs.getString("sname"));
+
+                Subject subject = new Subject();
+                subject.setName(rs.getString("subname"));
+
+                Assessment assessment = new Assessment();
+                assessment.setName(rs.getString("aname"));
+                assessment.setWeight(rs.getFloat("weight"));
+
+                Exam exam = new Exam();
+                exam.setSubject(subject);
+                exam.setAssessment(assessment);
+
+                Grade grade = new Grade();
+                grade.setStudent(student);
+                grade.setExam(exam);
+                grade.setScore(rs.getFloat("score"));
+                grade.setAssessment(assessment);
+                listStudentGrades.add(grade);
             }
         } catch (SQLException ex) {
-            Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, "Error closing resources", ex);
+            Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, "Error fetching student grades", ex);
+            throw ex; // Rethrow the exception to handle it at a higher level if necessary
+        } finally {
+            try {
+                if (rs != null) {
+                    rs.close();
+                }
+                if (stm != null) {
+                    stm.close();
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, "Error closing resources", ex);
+            }
         }
+
+        return listStudentGrades;
     }
-
-    return listStudentGrades;
-}
-
 
     public ArrayList<Grade> getGradesFromExamIds(ArrayList<Integer> eids) {
         ArrayList<Grade> grades = new ArrayList<>();
@@ -131,7 +130,11 @@ public ArrayList<Grade> listStudentGrades(int sid, int cid) throws SQLException 
     }
 
     public void insertGradesForCourse(int cid, ArrayList<Grade> grades) {
-        String sql_remove = "DELETE grades WHERE sid IN (SELECT sid FROM students_courses WHERE cid = ?)";
+        String sql_remove = "DELETE FROM grades WHERE sid IN "
+                + "(SELECT sid FROM students_courses WHERE cid = ?) "
+                + "AND eid IN (SELECT eid FROM exams WHERE aid IN "
+                + "(SELECT aid FROM assesments WHERE subid = (SELECT subid FROM courses"
+                + " WHERE cid = ?)))";
         String sql_insert = "INSERT INTO [grades]\n"
                 + "           ([eid]\n"
                 + "           ,[sid]\n"
@@ -148,6 +151,9 @@ public ArrayList<Grade> listStudentGrades(int sid, int cid) throws SQLException 
             connection.setAutoCommit(false);
             stm_remove = connection.prepareStatement(sql_remove);
             stm_remove.setInt(1, cid);
+                        stm_remove.setInt(2, cid);
+           
+
             stm_remove.executeUpdate();
 
             for (Grade grade : grades) {
