@@ -6,12 +6,14 @@ package controller.student;
 
 
 import controller.auth.BaseRequiredStudentAuthenticationController;
+import dal.StudentDBContext;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import model.Lecturer;
 import model.Student;
 import model.User;
@@ -50,12 +52,18 @@ public class ViewProfile extends BaseRequiredStudentAuthenticationController {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response, User user, Student student) throws ServletException, IOException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+      
+        int sid=student.getId();
+           StudentDBContext dbContext = new StudentDBContext(/* Pass your connection here */);
+        ArrayList<Student> studentInfo = dbContext.getStudentsInfoByID(sid);
+
+        request.setAttribute("studentInfo", studentInfo);
+        request.getRequestDispatcher("/view/student/infor.jsp").forward(request, response);
     }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response, User user, Student student) throws ServletException, IOException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+      
     }
 
 }
