@@ -14,6 +14,16 @@ public class Assessment {
     private float weight;
     private Subject subject;
 
+    public Assessment(int id, String name, float weight, Subject subject) {
+        this.id = id;
+        this.name = name;
+        this.weight = weight;
+        this.subject = subject;
+    }
+
+    public Assessment() {
+    }
+
     public int getId() {
         return id;
     }

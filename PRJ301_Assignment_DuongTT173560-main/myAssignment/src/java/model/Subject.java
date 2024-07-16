@@ -16,6 +16,16 @@ public class Subject {
     private ArrayList<Course> courses = new ArrayList<>();
     private ArrayList<Assessment> assessments = new ArrayList<>();
 
+    public Subject() {
+    }
+
+  
+
+    public Subject(int id, String name) {
+        this.id = id;
+        this.name = name;
+    }
+
     public int getId() {
         return id;
     }

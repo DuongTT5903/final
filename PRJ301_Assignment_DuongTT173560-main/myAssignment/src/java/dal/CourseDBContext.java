@@ -9,10 +9,7 @@ import model.Course;
 import java.sql.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import model.Assessment;
-import model.Exam;
-import model.Grade;
-import model.Student;
+
 
 /**
  *
@@ -26,8 +23,46 @@ public class CourseDBContext extends DBContext<Course> {
 //        ArrayList<Course> coursesByLecturer = db.getCoursesByLecturer(1);
 //        System.out.println(coursesByLecturer.size());
 //    }
+    public ArrayList<Course> getCoursesByStudent(int sid) {
+    ArrayList<Course> courses = new ArrayList<>();
+    PreparedStatement stm = null;
+    ResultSet rs = null;
+    try {
+        String sql = "SELECT c.cid, c.cname " +
+                     "FROM students s " +
+                     "JOIN students_courses sc ON s.sid = sc.sid " +
+                     "JOIN courses c ON sc.cid = c.cid " +
+                     "WHERE s.sid = ?";
+        stm = connection.prepareStatement(sql);
+        stm.setInt(1, sid); // Use the parameter sid
+        rs = stm.executeQuery();
+        while (rs.next()) {
+            Course c = new Course();
+            c.setId(rs.getInt("cid"));
+            c.setName(rs.getString("cname"));
+            courses.add(c);
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(CourseDBContext.class.getName()).log(Level.SEVERE, null, ex);
+    } finally {
+        try {
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
+            }
+            if (connection != null) {
+                connection.close();
+            }
+        } catch (SQLException ex) {
+            Logger.getLogger(CourseDBContext.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    return courses;
+}
 
-    
+
     public ArrayList<Course> getCoursesByLecturer(int lid) {
         ArrayList<Course> courses = new ArrayList<>();
         PreparedStatement stm = null;
@@ -35,13 +70,11 @@ public class CourseDBContext extends DBContext<Course> {
             String sql = "SELECT c.cid,c.cname FROM courses c INNER JOIN lecturers l ON l.lid = c.lid\n"
                     + "				INNER JOIN semester sem ON sem.semid = c.semid\n"
                     + "				WHERE l.lid = ? AND sem.active = 1";
-            
-            
+
             stm = connection.prepareStatement(sql);
             stm.setInt(1, lid);
             ResultSet rs = stm.executeQuery();
-            while(rs.next())
-            {
+            while (rs.next()) {
                 Course c = new Course();
                 c.setId(rs.getInt("cid"));
                 c.setName(rs.getString("cname"));
@@ -49,9 +82,7 @@ public class CourseDBContext extends DBContext<Course> {
             }
         } catch (SQLException ex) {
             Logger.getLogger(CourseDBContext.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        finally
-        {
+        } finally {
             try {
                 stm.close();
                 connection.close();
@@ -59,9 +90,8 @@ public class CourseDBContext extends DBContext<Course> {
                 Logger.getLogger(CourseDBContext.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-        return courses; 
-        
-        
+        return courses;
+
     }
 
     @Override

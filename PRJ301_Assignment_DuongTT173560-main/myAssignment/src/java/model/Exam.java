@@ -16,6 +16,15 @@ public class Exam {
     private Date from;
     private int duration;
     private Assessment assessment;
+        private Subject subject;
+
+    public void setSubject(Subject subject) {
+        this.subject = subject;
+    }
+
+    public Subject getSubject() {
+        return subject;
+    }
     private ArrayList<Grade> grades = new ArrayList<>();
 
     public ArrayList<Grade> getGrades() {

@@ -14,6 +14,7 @@ import model.Assessment;
 import model.Exam;
 import model.Grade;
 import model.Student;
+import model.Subject;
 
 /**
  *
@@ -21,60 +22,69 @@ import model.Student;
  */
 public class GradeDBContext extends DBContext<Grade> {
 
-    public ArrayList<Grade> listStudentGrades(int sid) throws SQLException {
-        ArrayList<Grade> listStudentGrades = new ArrayList<>();
-        PreparedStatement stm = null;
-        ResultSet rs = null;
+public ArrayList<Grade> listStudentGrades(int sid, int cid) throws SQLException {
+    ArrayList<Grade> listStudentGrades = new ArrayList<>();
+    PreparedStatement stm = null;
+    ResultSet rs = null;
 
+    try {
+        String sql = "SELECT g.sid, s.sname, sub.subname, a.aname, a.weight, g.score " +
+                     "FROM grades g " +
+                     "JOIN students s ON g.sid = s.sid " +
+                     "JOIN exams e ON g.eid = e.eid " +
+                     "JOIN assesments a ON e.aid = a.aid " +
+                     "JOIN subjects sub ON a.subid = sub.subid " +
+                     "JOIN courses c ON sub.subid = c.subid " +
+                     "JOIN students_courses sc ON c.cid = sc.cid AND s.sid = sc.sid " +
+                     "WHERE g.sid = ? AND c.cid = ?";
+
+        stm = connection.prepareStatement(sql);
+        stm.setInt(1, sid);
+        stm.setInt(2, cid);
+        rs = stm.executeQuery();
+
+        while (rs.next()) {
+            Student student = new Student();
+            student.setId(rs.getInt("sid"));
+            student.setName(rs.getString("sname"));
+
+            Subject subject = new Subject();
+            subject.setName(rs.getString("subname"));
+
+            Assessment assessment = new Assessment();
+            assessment.setName(rs.getString("aname"));
+            assessment.setWeight(rs.getFloat("weight"));
+
+            Exam exam = new Exam();
+            exam.setSubject(subject);
+            exam.setAssessment(assessment);
+
+            Grade grade = new Grade();
+            grade.setStudent(student);
+            grade.setExam(exam);
+            grade.setScore(rs.getFloat("score"));
+              grade.setAssessment(assessment);
+            listStudentGrades.add(grade);
+        }
+    } catch (SQLException ex) {
+        Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, "Error fetching student grades", ex);
+        throw ex; // Rethrow the exception to handle it at a higher level if necessary
+    } finally {
         try {
-            String sql = "SELECT g.eid, a.aname, g.sid, g.score, a.weight \n"
-                    + "FROM grades g \n"
-                    + "JOIN exams ex ON g.eid = ex.eid \n"
-                    + "JOIN assesments a ON ex.aid = a.aid \n"
-                    + "WHERE g.sid = ?";
-
-            stm = connection.prepareStatement(sql);
-            stm.setInt(1, sid);
-            rs = stm.executeQuery();
-
-            while (rs.next()) {
-                Grade g = new Grade();
-                g.setScore(rs.getFloat("score"));
-
-                Student s = new Student();
-
-                g.setStudent(s);
-
-                Exam e = new Exam();
-                e.setId(rs.getInt("eid"));
-                g.setExam(e);
-                Assessment a = new Assessment();
-                a.setWeight(rs.getFloat("weight"));
-                a.setName(rs.getString("aname"));
-
-                g.setAssessment(a);
-
-                listStudentGrades.add(g);
+            if (rs != null) {
+                rs.close();
+            }
+            if (stm != null) {
+                stm.close();
             }
         } catch (SQLException ex) {
-            Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, null, ex);
-            throw ex;
-        } finally {
-            try {
-                if (rs != null) {
-                    rs.close();
-                }
-                if (stm != null) {
-                    stm.close();
-                }
-
-            } catch (SQLException ex) {
-                Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, null, ex);
-            }
+            Logger.getLogger(StudentDBContext.class.getName()).log(Level.SEVERE, "Error closing resources", ex);
         }
-
-        return listStudentGrades;
     }
+
+    return listStudentGrades;
+}
+
 
     public ArrayList<Grade> getGradesFromExamIds(ArrayList<Integer> eids) {
         ArrayList<Grade> grades = new ArrayList<>();
