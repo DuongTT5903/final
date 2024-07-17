@@ -14,7 +14,18 @@ public class Lecturer {
     private int id;
     private String name;
     private ArrayList<Course> courses = new ArrayList<>();
+    private LecturerInfo lecturerInfo;
 
+    public LecturerInfo getLecturerInfo() {
+        return lecturerInfo;
+    }
+
+    public void setLecturerInfo(LecturerInfo lecturerInfo) {
+        this.lecturerInfo = lecturerInfo;
+    }
+
+
+    
     public int getId() {
         return id;
     }

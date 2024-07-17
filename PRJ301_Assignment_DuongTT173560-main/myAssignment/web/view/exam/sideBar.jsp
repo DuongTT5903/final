@@ -137,7 +137,12 @@
                         <span class="title">take grade</span>
                     </a>
                 </li>
-                
+                 <li class="list">
+                    <a href="http://localhost:8080/myAssignment/lecturer/profile">
+                        <span class="icon"><i class="fa-solid fa-calendar"></i></span>
+                        <span class="title">view profile</span>
+                    </a>
+                </li>
             </ul>
 
             <div class="toggle"></div>

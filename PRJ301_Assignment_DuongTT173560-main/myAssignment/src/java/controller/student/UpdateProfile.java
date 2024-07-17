@@ -52,7 +52,7 @@ public class UpdateProfile extends BaseRequiredStudentAuthenticationController {
             updatedInfo.setPlace(place);
 
             // Call DAL method to update student information
-            StudentDBContext dbContext = new StudentDBContext(); // Adjust how you get dbContext
+            StudentDBContext dbContext = new StudentDBContext(); 
             dbContext.updateStudentInfo(updatedInfo);
 
             // Redirect to a confirmation page or back to the student profile page

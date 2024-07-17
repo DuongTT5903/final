@@ -82,27 +82,27 @@
 </head>
 <body>
     <div class="form-container">
-        <h1>Edit Student Information</h1>
-        <form action="/myAssignment/student/update" method="post">
-            <c:forEach var="student" items="${studentInfo}">
-                <input type="hidden" name="id" value="${student.id}" />
+        <h1>Edit Lecturer Information</h1>
+        <form action="/myAssignment/exam/update" method="post">
+            <c:forEach var="lecturer" items="${lecturerInfo}">
+                <input type="hidden" name="id" value="${lecturer.id}" />
                 <label>Name:</label>
-                <p>${student.name}</p>
+                <p>${lecturer.name}</p>
                 <label>Gender:</label>
-                <input type="text" name="gender" value="${student.studentInfo.gender}" class="readonly-field" readonly />
+                <input type="text" name="gender" value="${lecturer.lecturerInfo.gender}" class="readonly-field" readonly />
                 <label>Email:</label>
-                <input type="email" name="email" value="${student.studentInfo.mail}" class="readonly-field" readonly />
+                <input type="email" name="email" value="${lecturer.lecturerInfo.mail}" class="readonly-field" readonly />
                 <label>Date of Birth:</label>
-                <input type="date" name="dob" value="${student.studentInfo.dob}" class="readonly-field" readonly />
+                <input type="date" name="dob" value="${lecturer.lecturerInfo.dob}" class="readonly-field" readonly />
                 <label>Phone:</label>
-                <input type="text" name="phone" value="${student.studentInfo.phone}" class="readonly-field" readonly />
+                <input type="text" name="phone" value="${lecturer.lecturerInfo.phone}" class="readonly-field" readonly />
                 <label>Place:</label>
-                <input type="text" name="place" value="${student.studentInfo.place}" class="readonly-field" readonly />
+                <input type="text" name="place" value="${lecturer.lecturerInfo.place}" class="readonly-field" readonly />
                 <hr />
             </c:forEach>
             <div class="button-container">
                 <button type="button" onclick="toggleEdit()" class="edit">Edit</button>
-               <button type="submit">Save Changes</button>
+                <button type="submit">Save Changes</button>
             </div>
         </form>
     </div>

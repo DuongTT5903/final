@@ -40,6 +40,14 @@
         <servlet-name>UpdateProfile</servlet-name>
         <servlet-class>controller.student.UpdateProfile</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>viewProfileLecturer</servlet-name>
+        <servlet-class>controller.exam.viewProfileLecturer</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>UpdateProfileLecturer</servlet-name>
+        <servlet-class>controller.exam.UpdateProfileLecturer</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ViewCourseByLecturerController</servlet-name>
         <url-pattern>/exam/lecturer</url-pattern>
@@ -75,5 +83,13 @@
     <servlet-mapping>
         <servlet-name>UpdateProfile</servlet-name>
         <url-pattern>/student/update</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>viewProfileLecturer</servlet-name>
+        <url-pattern>/lecturer/profile</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UpdateProfileLecturer</servlet-name>
+        <url-pattern>/exam/update</url-pattern>
     </servlet-mapping>
 </web-app>
